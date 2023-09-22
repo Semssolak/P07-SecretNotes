@@ -1,9 +1,9 @@
 from tkinter import *
 from PIL import Image, ImageTk
-from tkinter import messagebox  # uyarı mesajı için
-import base64  #encryption için
+from tkinter import messagebox  
+import base64  
 
-def encode(key, clear):  # internetten hazır aldık şifreleme
+def encode(key, clear):  
     enc = []
     for i in range(len(clear)):
         key_c = key[i % len(key)]
@@ -11,7 +11,7 @@ def encode(key, clear):  # internetten hazır aldık şifreleme
         enc.append(enc_c)
     return base64.urlsafe_b64encode("".join(enc).encode()).decode()
 
-def decode(key, enc):  # şifre çözme
+def decode(key, enc):  
     dec = []
     enc = base64.urlsafe_b64decode(enc).decode()
     for i in range(len(enc)):
@@ -29,15 +29,14 @@ def encrypt_func():
     if len(title) == 0 or len(message) == 0 or len(master_secret) == 0:
         messagebox.showinfo(title="Error!",message="Please enter all info.")
     else:
-        #encryption
         message_encrpted = encode(master_secret,message)
         try:
             with open("mysecret.txt",mode="a") as textfile:
-                textfile.write(f"\n{title}\n{message_encrpted}")  #dosyaya şifrelenmiş halini koyduk
+                textfile.write(f"\n{title}\n{message_encrpted}") 
         except FileNotFoundError:
-            with open("mysecret.txt",mode="w") as textfile:  # sadece bu kısımlada kullanabilirdik
-                textfile.write(f"\n{title}\n{message_encrpted}")   #fakat bazen hata alabiliriz
-        finally:  # buttona a bastığımızda ekranda yazı kalmaması için
+            with open("mysecret.txt",mode="w") as textfile:  
+                textfile.write(f"\n{title}\n{message_encrpted}") 
+        finally: 
             title_entry.delete(0,END)
             key_entry.delete(0,END)
             secret_text.delete("1.0",END)
@@ -52,44 +51,27 @@ def decrypt_func():
         try:
             decrypted_message = decode(key_text,message_encrypted)
             secret_text.delete("1.0",END)
-            secret_text.insert("1.0",decrypted_message) #bu alana decrypte edilmiş halini ekledik
+            secret_text.insert("1.0",decrypted_message)
         except:
             messagebox.showinfo(title="!Error",message="Please enter encrypted text!")
 
-#UI
 window = Tk()
 window.title("Secret Notes")
 window.minsize(width=500, height=700)
 window.config(background="#3C4D98")
 
-#Icon
 icon = PhotoImage(file='Secret_Note.png')
 window.iconphoto(False, icon)
 
-#Image
-# PIL ile resmi açın
+
 img = Image.open("Secret_Note.png")
-# Yeni boyutları belirleyin
 new_width = 300
-new_height = 200
-# Görüntüyü yeniden boyutlandırın
+new_height = 20
 img = img.resize((new_width, new_height))
-# Tkinter için uygun bir formata dönüştürün
 tk_img = ImageTk.PhotoImage(img)
-# Label kullanarak görüntüyü gösterin
 label = Label(window, image=tk_img)
 label.grid(row=0, column=3, padx=30, pady=5)
 label.config(background="#3C4D98")
-
-#photo = PhotoImage(file ="")
-#photo_label = Label(image=photo)
-#photo_label.pack()   #beu şekilde de foto koyabiliriz fakat biz resize yapmak istedik
-
-# yada canvasla boş bir alan oluşturup yapılabilir
-#canvas = Canvas(height=200,width=200)
-#canvas.create_image(0,0,image=photo)  # kooridnat
-#canvas.pack()
-
 
 title_label = Label(text="Enter your title",font=("Verdena",10,"normal"))
 title_label.grid(row=5, column=3, padx=30, pady=5)
